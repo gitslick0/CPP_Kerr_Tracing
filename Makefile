@@ -14,7 +14,7 @@ EXECUTABLE = my_program
 
 # Source files
 FORTRAN_SOURCE = ynogk.f90
-CPP_SOURCE = Classes2.cpp
+CPP_SOURCE = Classes.cpp
 
 # Object files
 FORTRAN_OBJECT = $(FORTRAN_SOURCE:.f90=.o)

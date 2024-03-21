@@ -152,7 +152,7 @@ public:
   double precision = 1.0e-6;
   double a_spin = 0.0;
   std::array<double, 3> coords = {0.0, 0.0, 0.0};
-  
+
   BisectionMethod_for_cart_to_bl(){
     estimate = 0.0, lower_bound = -1000.0, upper_bound = 1000.0;
   }
@@ -554,10 +554,12 @@ class Emission_Setup{
 public:
   BlackHole BH;
   Emission_Source ES;
+  AccretionDisk AD;
 
-  Emission_Setup(const std::array<double, 3>& input_position, const std::array<double, 3>& input_velocity, int input_numPhotons, double a_spin){
+  Emission_Setup(std::array<double, 3>& input_position, const std::array<double, 3>& input_velocity, int input_numPhotons, const double a_spin = 0.0){
     BH = BlackHole(a_spin);
     ES = Emission_Source(input_position, input_velocity, input_numPhotons, a_spin);
+    AD = AccretionDisk();
   }
 
   BlackHole get_BlackHole(){
@@ -568,16 +570,25 @@ public:
     return ES;
   }
 
+  AccretionDisk get_AccretionDisk(){
+    return AD;
+  }
+  std::vector<Photon> get_EmittedPhotons(){
+    return ES.get_Photons();
+  }
   void set_BlackHole(const BlackHole &new_BH){
     BH = new_BH;
   }
   void set_Emission_Source(const Emission_Source &new_ES){
     ES = new_ES;
   }
-
+  void set_AccretionDisk(const AccretionDisk &new_AD){
+    AD = new_AD;
+  }
   void calculate_Photon_rays(int n_steps){
     ES.calculate_rays(n_steps, BH.get_a_spin());
   }
+
 };
 
 

@@ -1,4 +1,4 @@
-#include"Renderer2.h"
+#include"./helpers/Renderer2.h"
 
 int main() {
     const int WIDTH = 800;

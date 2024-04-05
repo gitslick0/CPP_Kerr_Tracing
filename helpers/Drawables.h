@@ -30,10 +30,11 @@ public:
 
     virtual void update(float time){
         // implement update of the model matrix or other here
-        std::cout << "this is the abstract update method for Drawables" << std::endl;
+        //std::cout << "this is the abstract update method for Drawables" << std::endl;
     }
 
 };
+
 
 class DrawableSphere : public Drawable{
 private:
@@ -168,9 +169,7 @@ public:
         const float radius_out = this->r_out;
 
         for (int i = 0; i <= slices; ++i) {
-            std::cout << "Creating vertex for slices " << i << std::endl;
             float phi = static_cast<float>(i) * 2*M_PI / slices;
-            std::cout << "Phi is " << phi << std::endl;
                 float x_in = radius_in*std::cos(phi);
                 float y_in = radius_in*std::sin(phi);
                 float z_in = this->height;

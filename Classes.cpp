@@ -12,14 +12,14 @@ int main(int argc, char** argv) {
   std::srand(time(NULL));
   // Initialize Emission Setup
       // Initiate BlackHole
-  BlackHole BH = BlackHole(0.98);
+  BlackHole BH = BlackHole(0.0);
       // Set up position and Velocity
-  arr3d bl_source_position = cart_to_bl({4.0, 0.0, 2.0}, BH.get_a_spin()); // x,y,z coordinates
+  arr3d bl_source_position = cart_to_bl({0.0, 7.0, 0.0}, BH.get_a_spin()); // x,y,z coordinates
   std::cout << "Source position " << bl_source_position[0] << ", " << bl_source_position[1] << ", " << bl_source_position[2] << std::endl;
   arr3d source_position = {bl_source_position.data()[0], std::sin(bl_source_position.data()[1]), std::cos(bl_source_position.data()[1])};
   arr3d source_velocity = {0.0, 0.0, 0.0}; // x,y,z velocities
       //
-  Emission_Setup ESt = Emission_Setup(source_position, source_velocity, 10, BH.get_a_spin());
+  Emission_Setup ESt = Emission_Setup(source_position, source_velocity, 100, BH.get_a_spin());
 
   // Check Correctness
   std::cout << "We have " << ESt.get_EmittedPhotons().size() << "Photons" << std::endl;

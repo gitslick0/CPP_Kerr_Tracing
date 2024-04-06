@@ -330,8 +330,8 @@ public:
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // Set rendering mode to wireframe
     }
     void update(float time) override {
-        if(this->n_draw < coordinates.size()){
-            this->n_draw = static_cast<int>(coordinates.size()/5.0 * time);
+        if(10.0*(time - 5) < coordinates.size()){
+            this->n_draw = std::max(static_cast<int>(coordinates.size()/10.0 * (time - 5)), 1);
         }
     }
 };

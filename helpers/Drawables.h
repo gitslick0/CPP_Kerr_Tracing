@@ -1,6 +1,10 @@
+#ifndef _Drawables_h_
+#define _Drawables_h_
+
 #include<vector>
 #include<iostream>
 #include<glm/glm.hpp>
+#include"coordinates.h"
 
 class Drawable{
 private:
@@ -43,14 +47,14 @@ private:
 public:
     DrawableSphere(){}
     GLuint VBO, VAO, EBO;
-    const int stacks = 80, slices = 80;
+    const int stacks = 100, slices = 100;
     DrawableSphere(double inp_radius){
         this->radius = inp_radius;
     }
     std::vector<GLfloat> createVertices(){
         std::vector<GLfloat> vertices;
-        const int stacks = 20;
-        const int slices = 20;
+        const int stacks = this->stacks;
+        const int slices = this->slices;
         const float radius = this->radius;
 
         for (int i = 0; i <= stacks; ++i) {
@@ -153,7 +157,7 @@ class DrawableDisk : public Drawable{
 private:
     double r_in, r_out;
     GLuint VBO, VAO, EBO;
-    const int slices = 80;
+    const int slices = 120;
     double height = 0.0;
 public:
     DrawableDisk(){};
@@ -259,3 +263,77 @@ public:
         this->setModelMatrix(updated_model_matrix);*/
     }
 };
+
+class DrawableLine : public Drawable{
+private:
+    GLuint VBO, VAO, EBO;
+    glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
+    std::vector<CoordVec3> coordinates;
+    int n_draw;
+public:
+    DrawableLine(){};
+    DrawableLine(std::vector<CoordVec3> inp_vertices){
+        coordinates = inp_vertices;
+    }
+    std::vector<GLfloat> createVertices(){
+        std::vector<GLfloat> Vertices;
+        for(int i = 0; i < coordinates.size(); i++){
+            Vertices.push_back(coordinates[i].x); Vertices.push_back(coordinates[i].z); Vertices.push_back(coordinates[i].y);
+            // Set Color
+            Vertices.push_back(this->color.x); Vertices.push_back(this->color.y); Vertices.push_back(this->color.z);
+        }
+        return Vertices;
+    }
+
+    std::vector<GLuint> createIndices(){
+        std::vector<GLuint> indices;
+        for(int i=0; i < coordinates.size() - 1; i++){
+            indices.push_back(i); indices.push_back(i+1);
+        }
+        return indices;
+    }
+    
+    void draw() override {
+        std::vector<GLfloat> vertices = this->createVertices();
+        std::vector<GLuint> indices = this->createIndices();
+
+        glGenVertexArrays(1, &VAO);
+        glGenBuffers(1, &VBO);
+        glGenBuffers(1, &EBO);
+
+        glBindVertexArray(VAO);
+
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat), vertices.data(), GL_STATIC_DRAW);
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
+
+        // Set Position Data
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
+        glEnableVertexAttribArray(0);
+
+        // Set Color Data
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), (void*)(3*sizeof(GLfloat)));
+        glEnableVertexAttribArray(1);
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
+
+        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // Set rendering mode to wireframe
+
+        glBindVertexArray(VAO);
+        //glDrawElements(GL_LINES, (GLsizei)(3*vertices.size()), GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_LINES, (GLsizei)(3*this->n_draw), GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
+
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // Set rendering mode to wireframe
+    }
+    void update(float time) override {
+        if(this->n_draw < coordinates.size()){
+            this->n_draw = static_cast<int>(coordinates.size()/5.0 * time);
+        }
+    }
+};
+
+#endif

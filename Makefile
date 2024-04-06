@@ -8,7 +8,7 @@ CFLAGS = -c
 RCFLAGS = -o
 
 # Linker flags
-LDFLAGS = -lgfortran -lGLU -lglut -lGL
+LDFLAGS = -lgfortran -lGLU -lglut -lGL -lGLEW -lglfw
 GLDFLAGS = -lGLU -lglut -lGL -lGLEW -lg -lglfw
 
 # Executable name

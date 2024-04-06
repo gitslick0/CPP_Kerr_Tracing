@@ -1,4 +1,9 @@
+#ifndef _Classes_lib_
+#define _Classes_lib_
+
 #include <iostream>
+#include"coordinates.h"
+#include"Drawables.h"
 #include <cmath>
 #include <ctime>
 #include <iterator>
@@ -356,6 +361,8 @@ private:
   double p_emdisk = static_cast<double>(INFINITY);
   double final_destination = -0.5;
   std::vector<std::array<double, 4>> total_ray = {};
+  std::vector<CoordVec3> coordinate_ray;
+  DrawableLine Ray;
 
   
 public:
@@ -442,6 +449,20 @@ public:
     return total_ray;
   }
 
+  void set_coordinate_ray(std::vector<CoordVec3> inp_coordinates){
+    this->coordinate_ray = inp_coordinates;
+  }
+  std::vector<CoordVec3> get_CoordinateRay(){
+    return this->coordinate_ray;
+  }
+
+  DrawableLine get_Drawable(){
+    return Ray;
+  }
+  void set_Drawable(DrawableLine inp_Line){
+    this->Ray = inp_Line;
+  }
+
   /*void set_initial_direction(const std::array<double, 3>& source_position, const double spin, const std::array<double, 3>& source_velocity){ 
     std::array<double, 4>f1234;  double lambda, q;
     __blcoordinate_MOD_initialdirection(initial_momenta[1], initial_momenta[2], initial_momenta[0], source_position[1], source_position[2], spin, source_position[0], source_velocity, lambda, q, f1234);
@@ -526,13 +547,17 @@ public:
     for (int jj = 0; jj < Photons.size(); ++jj){
       Photon curr_Photon = Photons[jj];
       std::vector<std::array<double,4>> curr_Photon_ray = {};
+      std::vector<CoordVec3> curr_Photon_coords = {};
       for(int kk = 0; kk < n_steps; ++kk){
         double p_curr = curr_Photon.get_p_total()/static_cast<double>(n_steps) * kk;
         std::array<double, 5> curr_photon_pos = YNOGK(p_curr, curr_Photon.get_initial_direction(), curr_Photon.get_motion_constants(), position, a_spin);
         std::array<double, 4> cart_pos = bl_to_cart({curr_photon_pos[0], std::acos(curr_photon_pos[1]), curr_photon_pos[2], p_curr}, a_spin);
         curr_Photon_ray.push_back(cart_pos);
+        curr_Photon_coords.push_back(CoordVec3(cart_pos[0], cart_pos[1], cart_pos[2]));
       }
       curr_Photon.set_total_ray(curr_Photon_ray);
+      curr_Photon.set_coordinate_ray(curr_Photon_coords);
+      curr_Photon.set_Drawable(DrawableLine(curr_Photon_coords));
       new_Photons.push_back(curr_Photon);
     }
   this->set_Photons(new_Photons);
@@ -651,3 +676,4 @@ void init_canvas() {
 
 
 
+#endif

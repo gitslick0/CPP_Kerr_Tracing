@@ -1,3 +1,6 @@
+#ifndef _Renderer_h_
+#define _Renderer_h_
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
@@ -135,8 +138,6 @@ public:
         }
 
         if (glfwGetKey(win, GLFW_KEY_W) == GLFW_PRESS){
-            std::cout << "Pressed W Key" << std::endl;
-            std::cout << "Position is " << camera.Position.x << camera.Position.y << camera.Position.z << std::endl;
             camera.ProcessKeyboard(FORWARD, deltaTime);
         }
         if (glfwGetKey(win, GLFW_KEY_S) == GLFW_PRESS)
@@ -161,3 +162,5 @@ private:
     int height;
     const char* title;
 };
+
+#endif

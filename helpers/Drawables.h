@@ -270,10 +270,18 @@ private:
     glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
     std::vector<CoordVec3> coordinates;
     int n_draw;
+    std::vector<float> time_ray;
 public:
     DrawableLine(){};
     DrawableLine(std::vector<CoordVec3> inp_vertices){
         coordinates = inp_vertices;
+        for(int j=0; j<inp_vertices.size(); j++){
+            time_ray.push_back(static_cast<float>(j));
+        }
+    }
+    DrawableLine(std::vector<CoordVec3> inp_vertices, std::vector<float> inp_time_ray){
+        coordinates = inp_vertices;
+        time_ray = inp_time_ray;
     }
     std::vector<GLfloat> createVertices(){
         std::vector<GLfloat> Vertices;
@@ -330,9 +338,14 @@ public:
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // Set rendering mode to wireframe
     }
     void update(float time) override {
-        if(10.0*(time - 5) < coordinates.size()){
-            this->n_draw = std::max(static_cast<int>(coordinates.size()/10.0 * (time - 5)), 1);
-        }
+
+        //auto lower = std::lower_bound(time_ray.begin(), time_ray.end(), (time-5)*3);
+        //auto index = std::distance(time_ray.begin(), lower);
+        //this->n_draw = index;
+        double size = static_cast<double>(coordinates.size());
+        this->n_draw = std::max(static_cast<int>(coordinates.size()/20.0 * fmod((time - 5), 20.0)), 1);
+        std::cout << fmod((time - 5), 20) << std::endl;
+        std::cout << this->n_draw << std::endl;
     }
 };
 

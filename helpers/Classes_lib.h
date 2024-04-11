@@ -362,6 +362,7 @@ private:
   double final_destination = -0.5;
   std::vector<std::array<double, 4>> total_ray = {};
   std::vector<CoordVec3> coordinate_ray;
+  std::vector<float> time_ray;
   DrawableLine Ray;
 
   
@@ -454,6 +455,12 @@ public:
   }
   std::vector<CoordVec3> get_CoordinateRay(){
     return this->coordinate_ray;
+  }
+  void set_time_ray(std::vector<float> inp_time_ray){
+    this->time_ray = inp_time_ray;
+  }
+  std::vector<float> get_time_ray(){
+    return this->time_ray;
   }
 
   DrawableLine get_Drawable(){
@@ -548,16 +555,19 @@ public:
       Photon curr_Photon = Photons[jj];
       std::vector<std::array<double,4>> curr_Photon_ray = {};
       std::vector<CoordVec3> curr_Photon_coords = {};
+      std::vector<float> curr_Photon_time = {};
       for(int kk = 0; kk < n_steps; ++kk){
         double p_curr = curr_Photon.get_p_total()/static_cast<double>(n_steps) * kk;
         std::array<double, 5> curr_photon_pos = YNOGK(p_curr, curr_Photon.get_initial_direction(), curr_Photon.get_motion_constants(), position, a_spin);
         std::array<double, 4> cart_pos = bl_to_cart({curr_photon_pos[0], std::acos(curr_photon_pos[1]), curr_photon_pos[2], p_curr}, a_spin);
         curr_Photon_ray.push_back(cart_pos);
         curr_Photon_coords.push_back(CoordVec3(cart_pos[0], cart_pos[1], cart_pos[2]));
+        curr_Photon_time.push_back(curr_photon_pos[3]);
       }
       curr_Photon.set_total_ray(curr_Photon_ray);
       curr_Photon.set_coordinate_ray(curr_Photon_coords);
-      curr_Photon.set_Drawable(DrawableLine(curr_Photon_coords));
+      curr_Photon.set_time_ray(curr_Photon_time);
+      curr_Photon.set_Drawable(DrawableLine(curr_Photon_coords, curr_Photon_time));
       new_Photons.push_back(curr_Photon);
     }
   this->set_Photons(new_Photons);

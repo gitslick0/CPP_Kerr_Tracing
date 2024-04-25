@@ -87,7 +87,8 @@ double mu2p(std::array<double, 4> f1234, std::array<double, 2> Photon_motion_con
 }
 
 
-// Coordinate Related Stuff
+// Coordinate Related Stuff (mostly obsolete, has been replaced by coordinates.h. Bisection Class might be useful as template later on somewhere)
+
 
 std::array<double, 4> bl_to_cart(std::array<double,4> coords, double a_spin){
   double x = std::sqrt(coords.data()[0]*coords.data()[0] + a_spin*a_spin) * std::sin(coords.data()[1])*std::cos(coords.data()[2]);
@@ -98,6 +99,7 @@ std::array<double, 4> bl_to_cart(std::array<double,4> coords, double a_spin){
   return coords;
 };
 
+/*
 class BisectionMethod1D{
 private:
   std::function<double(double)> ThisFunc;
@@ -232,6 +234,7 @@ std::array<double, 3> cart_to_bl_num(std::array<double,3> coords, double a_spin)
   std::array<double,3> new_coords = Root_Searcher.bl_coord();
   return new_coords;
 }
+*/
 
 
 // Black Hole class definition
@@ -239,6 +242,23 @@ std::array<double, 3> cart_to_bl_num(std::array<double,3> coords, double a_spin)
 // Methods: get_a_spin(), get_rms, get_rHp, get_rHm, get_rphp, get_rphm
 // private properties: _a_spin, _rms, _rHp, _rHm, _rphp, _rphm
 
+double calculate_rho(double radius, double theta, double a_spin){
+  return pow((radius*radius + a_spin * a_spin),2) - (radius*radius * a_spin*a_spin + 2*radius*a_spin*a_spin - pow(a_spin, 4)) * std::sin(theta);
+}
+
+double calculate_omega(double radius, double theta, double a_spin){
+  return 2*a_spin*radius/(calculate_rho(radius, theta, a_spin));
+}
+
+double calculate_ut(double radius, double a_spin){
+  return (radius * std::sqrt(radius) + a_spin)/(std::sqrt(radius) * std::sqrt(radius*radius - 3*radius + 2*a_spin *std::sqrt(radius)));
+}
+
+double calculate_omegadisc(double radius, double a_spin){
+  return 1/(radius * std::sqrt(radius) + a_spin);
+}
+
+//double energyshift(std::array<double 3> velocity, std::array<double, 3> initial_momenta, std::array<double, 2> Photon_motion_constants, )
 
 double calculate_rms(double a_spin) {
   double Z1 = 1+std::cbrt(1-a_spin*a_spin)*(std::cbrt(1+a_spin) + std::cbrt(1-a_spin));
@@ -363,6 +383,7 @@ private:
   std::vector<std::array<double, 4>> total_ray = {};
   std::vector<CoordVec3> coordinate_ray;
   std::vector<float> time_ray;
+  std::vector<glm::vec3> ray_colors;
   DrawableLine Ray;
 
   
@@ -470,6 +491,13 @@ public:
     this->Ray = inp_Line;
   }
 
+  std::vector<glm::vec3> get_ray_colors(){
+    return this->ray_colors;
+  }
+  void set_ray_colors(std::vector<glm::vec3> inp_ray_colors){
+    this->ray_colors = inp_ray_colors;
+  }
+
   /*void set_initial_direction(const std::array<double, 3>& source_position, const double spin, const std::array<double, 3>& source_velocity){ 
     std::array<double, 4>f1234;  double lambda, q;
     __blcoordinate_MOD_initialdirection(initial_momenta[1], initial_momenta[2], initial_momenta[0], source_position[1], source_position[2], spin, source_position[0], source_velocity, lambda, q, f1234);
@@ -528,7 +556,8 @@ public:
       RandomPh.set_initial_direction_man(finitial_direction(RandomPh.get_initial_momenta(), position, a_spin, velocity));
       RandomPh.set_motion_constants_man(calculate_photon_motion_constants (RandomPh.get_initial_momenta(), position, a_spin, velocity));
       RandomPh.set_p_total(fp_total(RandomPh.get_initial_direction(), RandomPh.get_motion_constants(), position, a_spin));
-      RandomPh.set_p_emdisk(fp_emdisk(RandomPh.get_initial_direction(), RandomPh.get_motion_constants(), position, a_spin, 1.0, {calculate_rms(a_spin), 1000.0}));
+      RandomPh.set_p_emdisk(fp_emdisk(RandomPh.get_initial_direction(), RandomPh.get_motion_constants(), position, a_spin, 0.0, {1000.0, calculate_rms(a_spin)}));
+      std::cout << "pemdisk" << RandomPh.get_p_emdisk() << std::endl;
       Photons.push_back(RandomPh);
     }
   }
@@ -556,18 +585,30 @@ public:
       std::vector<std::array<double,4>> curr_Photon_ray = {};
       std::vector<CoordVec3> curr_Photon_coords = {};
       std::vector<float> curr_Photon_time = {};
+      std::vector<glm::vec3> curr_Photon_colors = {};
+      double p_final = curr_Photon.get_p_total();
+      if(curr_Photon.get_p_emdisk() != -1 && curr_Photon.get_p_emdisk() != -2){
+        // If we only want the part until it hits the disk
+        p_final = curr_Photon.get_p_emdisk();
+      }
       for(int kk = 0; kk < n_steps; ++kk){
-        double p_curr = curr_Photon.get_p_total()/static_cast<double>(n_steps) * kk;
+        double p_curr = p_final/static_cast<double>(n_steps) * kk;
         std::array<double, 5> curr_photon_pos = YNOGK(p_curr, curr_Photon.get_initial_direction(), curr_Photon.get_motion_constants(), position, a_spin);
         std::array<double, 4> cart_pos = bl_to_cart({curr_photon_pos[0], std::acos(curr_photon_pos[1]), curr_photon_pos[2], p_curr}, a_spin);
+        CoordVec3 currCoordinate = CoordVec3(cart_pos[0], cart_pos[1], cart_pos[2]);
+        glm::vec3 curr_color = glm::vec3(0.5f, 0.3f, 0.2f) * (float)(3.0/(currCoordinate.cart_norm()));
         curr_Photon_ray.push_back(cart_pos);
-        curr_Photon_coords.push_back(CoordVec3(cart_pos[0], cart_pos[1], cart_pos[2]));
+        curr_Photon_coords.push_back(currCoordinate);
         curr_Photon_time.push_back(curr_photon_pos[3]);
+        curr_Photon_colors.push_back(curr_color);
+
       }
       curr_Photon.set_total_ray(curr_Photon_ray);
       curr_Photon.set_coordinate_ray(curr_Photon_coords);
       curr_Photon.set_time_ray(curr_Photon_time);
-      curr_Photon.set_Drawable(DrawableLine(curr_Photon_coords, curr_Photon_time));
+      curr_Photon.set_ray_colors(curr_Photon_colors);
+      curr_Photon.set_Drawable(DrawableLine(curr_Photon_coords, curr_Photon_time, curr_Photon_colors));
+      //curr_Photon.set_Drawable(DrawableLine(curr_Photon_coords, curr_Photon_time));
       new_Photons.push_back(curr_Photon);
     }
   this->set_Photons(new_Photons);

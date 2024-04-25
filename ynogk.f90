@@ -4845,8 +4845,8 @@
                 endif        
             endif
             !write(*,*)'mu=',mu,B,t1,t2
-            pm=mu2p(f3,f2,lambda,q,mu,sinobs,muobs,a_spin,t1,t2,scal)  
-            re = radius(pm,f1234(1),lambda,q,a_spin,robs,scal)  
+            pm=mu2p(f3,f2,lambda,q,mu,sinobs,muobs,a_spin,t1,t2,scal)
+            re = radius(pm,f1234(1),lambda,q,a_spin,robs,scal) 
             IF(re .le. rout .and. re .ge. rin)THEN
                 Pemdisk = pm
                 return 

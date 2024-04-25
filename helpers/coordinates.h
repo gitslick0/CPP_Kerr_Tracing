@@ -103,6 +103,7 @@ public:
     bool bl = false;
     float x,y,z;
     CoordVec3(float xIn, float yIn, float zIn):x(xIn), y(yIn), z(zIn){};
+    CoordVec3(float xIn, float yIn, float zIn, bool cartIn, bool blIn):x(xIn), y(yIn), z(zIn), cartesian(cartIn), bl(blIn){};
     CoordVec3(){};
     void display(){
         std::cout << "[" << x << ", " << y << ", " << z << "]" << std::endl;
@@ -134,17 +135,15 @@ public:
             y_c = std::sqrt(this->x * this->x + a_spin*a_spin) * std::sin(this->y)*std::sin(this->z);
             z_c = this->x * std::cos(this->y);
             // update the cordinate kind
-            this->cartesian = true; this->bl = false;
         }
         else if (true == this->cartesian && false == this->bl){
             x_c = this->x; y_c = this->y; z_c = this->z;
-            this->cartesian = true; this->bl=false;
         }
         else {
             std::cerr << "Coordinate Vector is either both cartesian and bl or neither cartesian nor bl! Cannot convert" << std::endl;
             exit(1);
         }
-        coords = CoordVec3(x_c,y_c,z_c);
+        coords = CoordVec3(x_c,y_c,z_c, true, false);
         return coords;
     }
 
@@ -159,8 +158,6 @@ public:
             radius = std::sqrt(R1 + pow(x,2)+pow(y,2)+pow(z,2)-pow(a_spin,2))/std::sqrt(2);
             theta = std::acos(z/radius);
             phi = std::atan(y/x);
-            // update the cordinate kind
-            this->cartesian = true; this->bl = false;
         }
         else if (true == this->bl && false == this->cartesian){
             radius = this->x; theta = this->y; phi = this->z;
@@ -170,8 +167,25 @@ public:
             std::cerr << "Coordinate Vector is either both cartesian and bl or neither cartesian nor bl! Cannot convert" << std::endl;
             exit(1);
         }
-        coords = CoordVec3(radius, theta, phi);
+        coords = CoordVec3(radius, theta, phi, false, true);
         return coords;
+    }
+    float cart_norm(float a_spin = 0.0){
+        float norm = -1;
+        if (this->cartesian){
+            norm = std::sqrt(this->x*this->x + this->y*this->y + this->z*this->z);
+        }
+        else if (!this->cartesian && this->bl)
+        {
+            CoordVec3 cartesian = this->to_cart(a_spin);
+            norm = std::sqrt(cartesian.x*cartesian.x + cartesian.y*cartesian.y + cartesian.z*cartesian.z);
+        }
+        else
+        {
+            std::cerr << "Coordinate was neither bl nor cartesian or both at once" << std::endl;
+            norm = -1;
+        }
+        return norm;
     }
 };
 

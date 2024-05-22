@@ -4,13 +4,14 @@
 
 #include <iostream>
 #include <vector>
+#include <cmath>
 
 class CoordVec4{
 private:
     int length = 4;
+public:
     bool cartesian = true;
     bool bl = false;
-public:
     float x,y,z,t;
     CoordVec4(float xIn, float yIn, float zIn, float tIn):x(xIn), y(yIn), z(zIn), t(tIn){};
     CoordVec4(){};
@@ -187,6 +188,62 @@ public:
         }
         return norm;
     }
+};
+
+class MomentumVector : public CoordVec4{
+private:
+    float pr = this->x;
+    float pth = this->y;
+    float pph = this->z;
+    float pt = this->t;
+    
+public:
+    bool _check_momentum(CoordVec4 inp_momentum){
+        float length = pow(inp_momentum.x,2)+pow(inp_momentum.y,2)+pow(inp_momentum.z,2) - pow(inp_momentum.t,2);
+        return (length == 0.0);
+    }
+    MomentumVector(float inp_pr, float inp_pth, float inp_pph, float inp_pt){
+        bool valid = this->_check_momentum(CoordVec4(inp_pr, inp_pth, inp_pph, inp_pt));
+        if (!valid) {
+            std::cerr << "The input momenta do not belong to a photon" << std::endl;
+            std::cerr << "Adjusting Energy to meet photon requirements" << std::endl;
+        }
+        this->x = inp_pr; this->pr = inp_pr;
+        this->y = inp_pth; this->pth = inp_pth;
+        this->z = inp_pph; this->pph = inp_pph;
+        this->t = std::sqrt(pow(inp_pr,2) + pow(inp_pth, 2) + pow(inp_pph,2));
+    }
+    MomentumVector(float inp_pr, float inp_pth, float inp_pph){
+        this->x = inp_pr; this->pr = inp_pr;
+        this->y = inp_pth; this->pth = inp_pth;
+        this->z = inp_pph; this->pph = inp_pph;
+        this->t = std::sqrt(pow(inp_pr,2) + pow(inp_pth, 2) + pow(inp_pph,2));
+    }
+};
+
+class SourcePosition : public CoordVec3{
+    // Another "Alias" Class. This encapsulates the relevant data of the source position for many of the YNOGK functions.
+    // As Kerr spacetime is time invariant and polar rotation invariant, t and phi coordinates are not necessary for many calculations
+    // Contains: radius, sinobs, muobs | (radius, sin(theta), cos(theta)) where radius and theta are taken as the BL coordinates of the source
+private:
+
+public:
+    float radius;
+    float sinobs; float muobs;
+    SourcePosition(CoordVec3 inp){
+        if(inp.bl && !inp.cartesian){
+        this->x = inp.x; this->y = inp.y; this->z = inp.z;
+        this->radius = inp.x; this->sinobs = std::sin(inp.y); this->muobs = std::cos(inp.z);
+        }
+        else if (inp.cartesian && !inp.bl){
+            std::cerr << "CoordVec is cartesian! Need BL or additional a_spin information!" << std::endl;
+            this->x = inp.x; this->y = inp.y; this->z = inp.z; 
+        }
+        else{
+            std::cerr << "CoordVec neither cartesian nor BL or both simultaneously!" << std::endl;
+        }
+    }
+    SourcePosition(CoordVec4 inp) : SourcePosition(CoordVec3(inp.x, inp.y, inp.z)) {}
 };
 
 #endif

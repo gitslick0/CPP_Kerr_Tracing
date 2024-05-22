@@ -35,12 +35,12 @@ extern "C" {
 double frms(const double a_spin){
   return __blcoordinate_MOD_rms(&a_spin);
 }
-std::array<double, 4> finitial_direction (std::array<double, 3> momenta, std::array<double, 3> source_pos, const double a_spin, std::array<double, 3> source_vel){
+CoordVec4 finitial_direction (MomentumVector momenta, CoordVec3 source_pos, const double a_spin, CoordVec3 source_vel){
   double lambda = 0, q=0;
-  std::array<double,4> f1234;
+  std::array<double, 4> temp_f1234
   __blcoordinate_MOD_initialdirection(&momenta.data()[1], &momenta.data()[2], &momenta.data()[0], &source_pos.data()[1], &source_pos.data()[2], &a_spin, &source_pos.data()[0],
-                                      source_vel.data(), &lambda, &q, f1234.data());
-  return f1234;
+                                      source_vel.data(), &lambda, &q, tempf1234.data());
+  return CoordVec4(f1234[0], f1234[1], f1234[2], f1234[3]);
 }
 
 std::array<double,2> calculate_photon_motion_constants (std::array<double, 3> momenta, std::array<double, 3> source_pos, const double a_spin, std::array<double, 3> source_vel){

@@ -29,6 +29,10 @@ extern "C" {
                                 const double* exppsi, const double* expmu1, const double* expmu2);
   double __blcoordinate_MOD_mu2p(const double* f12343, const double* f12342, const double* lambda, const double* q, const double* mu, const double* sinobs, const double* muobs, const double* a_spin,
                                  const int* t1, const int* t2, const double* scal);
+  double __pemfinding_MOD_pemfind(const double* f1234, const double* lambda, const double* q, const double* sinobs, const double* muobs, const double* a_spin, const double* robs,
+                                 const double* scal, const double* r_in, const double* r_out, const double* muup, const double* mudown, const double* phy1, const double* phy2, const int* caserange,
+                                 std::function<double(const double*, const double*, const double*, const double*, const double*, const double*, const double*, const double*, const double*, const int*, const int*, const double* )>* Fp,
+                                 const double* paras, const bool* bisection, const double* NN);
 }
 
 // Convert fortran wrappers to C++ functions
@@ -85,6 +89,17 @@ double mu2p(std::array<double, 4> f1234, std::array<double, 2> Photon_motion_con
                                        &source_position.data()[1], &source_position.data()[2], &a_spin, &t1, &t2, &scal);
   return res;
 }
+
+double pemfind(std::array<double, 4> f1234, std::array<double, 2> Photon_motion_constants, std::array<double,3> source_position, double a_spin, std::array<double, 2> disk_radii, std::array<double, 2> mu_boundaries,
+               std::array<double, 2> phi_boundaries, int caserange, int t1, int t2,
+               /*std::function<double(double, std::array<double, 4>, std::array<double, 2>, std::array<double, 3>, double, int, int, std::array<double, 10>)> Fp*/
+               std::function<double(const double*, const double*, const double*, const double*, const double*, const double*, const double*, const double*, const double*, const int*, const int*, const double* )> Fp,
+                std::array<double, 10> paras, bool bisection, double NN){
+                double scal = 1.0;
+                return __pemfinding_MOD_pemfind(f1234.data(), &Photon_motion_constants.data()[0], &Photon_motion_constants.data()[1], &source_position.data()[1], &source_position.data()[2],
+                &a_spin, &source_position.data()[0], &scal, &disk_radii.data()[0], &disk_radii.data()[1], &mu_boundaries.data()[0], &mu_boundaries.data()[1], &phi_boundaries.data()[0], &phi_boundaries.data()[1],
+                &caserange, &Fp, paras.data(), &bisection, &NN);
+               }
 
 
 // Coordinate Related Stuff (mostly obsolete, has been replaced by coordinates.h. Bisection Class might be useful as template later on somewhere)
@@ -419,8 +434,12 @@ public:
   Photon(){
     double RAND1 = static_cast<double>(std::rand())/static_cast<double>(RAND_MAX);
     double RAND2 = static_cast<double>(std::rand())/static_cast<double>(RAND_MAX);
-    double PHI = 2*M_PI*RAND1;
-    double THETA = std::acos(1-2*RAND2);
+    //double PHI = 2*M_PI * RAND1;
+    //double PHI = M_PI/2 - M_PI/4 + M_PI/2*RAND1;
+    //double PHI = M_PI/2; // TOWARDS the black hole
+    double PHI = 0.0;
+    //double THETA = std::acos(1-2*RAND2);
+    double THETA = std::acos(1-2*0.5);
     double PP = std::cos(THETA); double PR = std::sin(THETA)*std::sin(PHI); double PT = std::sin(THETA)*std::cos(PHI);
     emission_angles = {PHI, THETA};
     initial_momenta = {PP, PR, PT};
@@ -596,7 +615,7 @@ public:
         std::array<double, 5> curr_photon_pos = YNOGK(p_curr, curr_Photon.get_initial_direction(), curr_Photon.get_motion_constants(), position, a_spin);
         std::array<double, 4> cart_pos = bl_to_cart({curr_photon_pos[0], std::acos(curr_photon_pos[1]), curr_photon_pos[2], p_curr}, a_spin);
         CoordVec3 currCoordinate = CoordVec3(cart_pos[0], cart_pos[1], cart_pos[2]);
-        glm::vec3 curr_color = glm::vec3(0.5f, 0.3f, 0.2f) * (float)(3.0/(currCoordinate.cart_norm()));
+        glm::vec3 curr_color = glm::vec3(1.0f, 1.0f, 1.0f) * (float)(3.0/(currCoordinate.cart_norm()));
         curr_Photon_ray.push_back(cart_pos);
         curr_Photon_coords.push_back(currCoordinate);
         curr_Photon_time.push_back(curr_photon_pos[3]);

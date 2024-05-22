@@ -94,15 +94,18 @@ public:
         coords = CoordVec4(radius, theta, phi, t_b);
         return coords;
     }
+    uint get_length(){
+        return this->length;
+    }
 };
 
 class CoordVec3{
 private:
     int length = 3;
 public:
+    float x,y,z;
     bool cartesian = true;
     bool bl = false;
-    float x,y,z;
     CoordVec3(float xIn, float yIn, float zIn):x(xIn), y(yIn), z(zIn){};
     CoordVec3(float xIn, float yIn, float zIn, bool cartIn, bool blIn):x(xIn), y(yIn), z(zIn), cartesian(cartIn), bl(blIn){};
     CoordVec3(){};
@@ -188,6 +191,10 @@ public:
         }
         return norm;
     }
+
+    uint get_length(){
+        return this-> length;
+    }
 };
 
 class MomentumVector : public CoordVec4{
@@ -218,6 +225,10 @@ public:
         this->y = inp_pth; this->pth = inp_pth;
         this->z = inp_pph; this->pph = inp_pph;
         this->t = std::sqrt(pow(inp_pr,2) + pow(inp_pth, 2) + pow(inp_pph,2));
+    }
+
+    bool check_validity(){
+        return _check_momentum(CoordVec4(pr, pth, pph, pt));
     }
 };
 

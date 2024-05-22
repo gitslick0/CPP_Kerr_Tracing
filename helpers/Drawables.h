@@ -3,7 +3,11 @@
 
 #include<vector>
 #include<iostream>
+#include<GL/glew.h>
+#include<GL/glu.h>
 #include<glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include"coordinates.h"
 
 class Drawable{
@@ -31,12 +35,10 @@ public:
     void setModelMatrix(glm::mat4 inp_model){
         this->model = inp_model;
     }
-
-    virtual void update(float time){
-        // implement update of the model matrix or other here
-        //std::cout << "this is the abstract update method for Drawables" << std::endl;
-    }
-
+    
+    // implement update of the model matrix or other here
+    //std::cout << "this is the abstract update method for Drawables" << std::endl;
+    virtual void update(float time) = 0;
 };
 
 class DrawableBLSphere : public Drawable{
@@ -56,7 +58,6 @@ public:
         std::vector<GLfloat> vertices;
         const int stacks = this->stacks;
         const int slices = this->slices;
-        const float radius = this->radius;
 
         for (int i = 0; i <= stacks; ++i) {
             float phi = static_cast<float>(i) * M_PI / stacks;
@@ -80,7 +81,6 @@ public:
         std::vector<GLuint> indices;
         const int stacks = this->stacks;
         const int slices = this->slices;
-        const float radius = this->radius;
 
         for (int i = 0; i < stacks; ++i) {
             for (int j = 0; j < slices; ++j) {
@@ -193,7 +193,6 @@ public:
         std::vector<GLuint> indices;
         const int stacks = this->stacks;
         const int slices = this->slices;
-        const float radius = this->radius;
 
         for (int i = 0; i < stacks; ++i) {
             for (int j = 0; j < slices; ++j) {
@@ -390,7 +389,7 @@ public:
     DrawableLine(std::vector<CoordVec3> inp_vertices){
         // No specific colors specified, use white everywhere
         coordinates = inp_vertices;
-        for(int j=0; j<inp_vertices.size(); j++){
+        for(int j=0; j<int(inp_vertices.size()); j++){
             time_ray.push_back(static_cast<float>(j));
             glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
             colors.push_back(color);
@@ -408,7 +407,7 @@ public:
     }
     std::vector<GLfloat> createVertices(){
         std::vector<GLfloat> Vertices;
-        for(int i = 0; i < coordinates.size(); i++){
+        for(int i = 0; i < int(coordinates.size()); i++){
             Vertices.push_back(coordinates[i].x); Vertices.push_back(coordinates[i].z); Vertices.push_back(coordinates[i].y);
             // Set Color
             Vertices.push_back(this->colors[i].x); Vertices.push_back(this->colors[i].y); Vertices.push_back(this->colors[i].z);
@@ -418,7 +417,7 @@ public:
 
     std::vector<GLuint> createIndices(){
         std::vector<GLuint> indices;
-        for(int i=0; i < coordinates.size() - 1; i++){
+        for(int i=0; i < int(coordinates.size()) - 1; i++){
             indices.push_back(i); indices.push_back(i+1);
         }
         return indices;
@@ -465,7 +464,7 @@ public:
         //auto lower = std::lower_bound(time_ray.begin(), time_ray.end(), (time-5)*3);
         //auto index = std::distance(time_ray.begin(), lower);
         //this->n_draw = index;
-        double size = static_cast<double>(coordinates.size());
+        //double size = static_cast<double>(coordinates.size());
         this->n_draw = std::max(static_cast<int>(coordinates.size()/20.0 * fmod((time - 5), 20.0)), 1);
         //std::cout << fmod((time - 5), 20) << std::endl;
         //std::cout << this->n_draw << std::endl;

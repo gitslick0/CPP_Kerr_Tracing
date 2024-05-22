@@ -70,7 +70,7 @@ double fp_emdisk(const std::array<double, 4> f1234, const std::array<double, 2> 
 
 std::array<double, 5> YNOGK(double p, std::array<double, 4> f1234, std::array<double, 2> Photon_motion_constants,std::array<double, 3> source_pos, double a_spin){
   double scal = 1.0;
-  double radi, mu, phi, time, sigma;
+  double radi = 0.0, mu = 0.0, phi = 0.0, time = 0.0, sigma = 0.0;
   __blcoordinate_MOD_ynogk(&p, f1234.data(), &Photon_motion_constants.data()[0], &Photon_motion_constants.data()[1], &source_pos.data()[1],
                                    &source_pos.data()[2], &a_spin, &source_pos.data()[0], &scal, &radi, &mu, &phi, &time, &sigma);
   return {radi, mu, phi, time, sigma};
@@ -91,7 +91,7 @@ double mu2p(std::array<double, 4> f1234, std::array<double, 2> Photon_motion_con
 }
 
 double pemfind(std::array<double, 4> f1234, std::array<double, 2> Photon_motion_constants, std::array<double,3> source_position, double a_spin, std::array<double, 2> disk_radii, std::array<double, 2> mu_boundaries,
-               std::array<double, 2> phi_boundaries, int caserange, int t1, int t2,
+               std::array<double, 2> phi_boundaries, int caserange,
                /*std::function<double(double, std::array<double, 4>, std::array<double, 2>, std::array<double, 3>, double, int, int, std::array<double, 10>)> Fp*/
                std::function<double(const double*, const double*, const double*, const double*, const double*, const double*, const double*, const double*, const double*, const int*, const int*, const double* )> Fp,
                 std::array<double, 10> paras, bool bisection, double NN){
@@ -432,13 +432,14 @@ public:
     initial_momenta = {PP, PR, PT};
   }
   Photon(){
-    double RAND1 = static_cast<double>(std::rand())/static_cast<double>(RAND_MAX);
+    /*double RAND1 = static_cast<double>(std::rand())/static_cast<double>(RAND_MAX);
     double RAND2 = static_cast<double>(std::rand())/static_cast<double>(RAND_MAX);
-    //double PHI = 2*M_PI * RAND1;
-    //double PHI = M_PI/2 - M_PI/4 + M_PI/2*RAND1;
-    //double PHI = M_PI/2; // TOWARDS the black hole
+    double PHI = 2*M_PI * RAND1; "Uniform PHI". Also comment in RAND1 again if you want to use this.
+    double PHI = M_PI/2 - M_PI/4 + M_PI/2*RAND1;
+    double PHI = M_PI/2; // TOWARDS the black hole
+    Different possibilities for PHI */
     double PHI = 0.0;
-    //double THETA = std::acos(1-2*RAND2);
+    //double THETA = std::acos(1-2*RAND2); "uniform Theta". Comment in RAND2 again if you want to use this.
     double THETA = std::acos(1-2*0.5);
     double PP = std::cos(THETA); double PR = std::sin(THETA)*std::sin(PHI); double PT = std::sin(THETA)*std::cos(PHI);
     emission_angles = {PHI, THETA};
@@ -599,7 +600,7 @@ public:
   }
   void calculate_rays(int n_steps, double a_spin){
     std::vector<Photon> new_Photons = {};
-    for (int jj = 0; jj < Photons.size(); ++jj){
+    for (int jj = 0; jj < int(Photons.size()); ++jj){
       Photon curr_Photon = Photons[jj];
       std::vector<std::array<double,4>> curr_Photon_ray = {};
       std::vector<CoordVec3> curr_Photon_coords = {};

@@ -27,13 +27,16 @@ public:
     float lastFrame = 0.0f;
     
     Renderer(int width, int height, const char* title) : width(width), height(height), title(title) {
+        this->title = title;
+        // Initialize glew to enable access to all of the OpenGL functions
         GLenum glfw_init_err = glfwInit();
         if(glfw_init_err != GLFW_TRUE){
             std::cerr << "Failed to initialize GLFW\n with error " << glfw_init_err << std::endl;
             exit(1);
         }
 
-        window = glfwCreateWindow(width, height, title, nullptr, nullptr);
+        // Initialize window to draw in
+        window = glfwCreateWindow(width, height, this->title, nullptr, nullptr);
         if (!window) {
             glfwTerminate();
             std::cerr << "Failed to create GLFW window\n";

@@ -34,7 +34,7 @@ int main(int argc, char** argv) {
 
     const int WIDTH = 800;
     const int HEIGHT = 600;
-    const char* TITLE = "OpenGL Window";
+    const char* TITLE = "BlackHole ??";
 
     Renderer renderer(WIDTH, HEIGHT, TITLE);
    

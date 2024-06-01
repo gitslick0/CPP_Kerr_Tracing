@@ -47,4 +47,3 @@ clean_renderer:
 
 clean:
 	rm -f $(FORTRAN_OBJECT) $(CPP_OBJECT) $(EXECUTABLE)
-

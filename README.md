@@ -50,6 +50,7 @@ Note that the raytracing libraries in `/src/ynogk.f90` work independently of Ope
 Clone/Download this repository. CD into the repository location and into the build directory (which should be empty as of the time of the download).
 Open a shell inside the build directory and execute
 ```bash
+$ mkdir build && cd build
 $ cmake ..
 $ cmake --build .
 ```

@@ -1,6 +1,6 @@
 # YNOGK Kerr Simulations
 
-Null Geodesic Simulation repository spawned from work on my master's thesis () and legacy code from ()
+Null Geodesic Simulation repository spawned from work on my master's thesis () and legacy code from ([arXiv:1305.1250](https://arxiv.org/abs/1305.1250))
 
 # Installation
 The repository was developed and tested for Ubuntu 24.04 LTS only. Functionality on WSL or similar might be given but not guaranteed.

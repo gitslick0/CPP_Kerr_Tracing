@@ -11,53 +11,32 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    - name: Checkout submodules
+      run: git submodule update --init --recursive
+
     - name: Print working directory after checkout
-      run: | 
-        pwd
-        echo ${{ github.workspace }}
-        echo $GITHUB_WORKSPACE
-        ls ${{ github.workspace }}
+      run: |
+        echo "Printing what is inside the extern/googletest repo"
         ls ${{ github.workspace }}/extern/googletest
+        ls ./extern/googletest
 
     - name: Set up CMake
       uses: jwlawson/actions-setup-cmake@v1
-
-    - name: Print working directory after CMake setup
-      run: |
-        pwd
-        ls ${{ github.workspace }}
 
     - name: Install dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y libglew-dev libglfw3-dev libglm-dev gfortran freeglut3
-        pwd
-        ls ${{ github.workspace }}
 
     - name: Build Google Test
       run: |
         mkdir -p build/googletest
-        echo "Listing github workspace"
-        ls ${{ github.workspace }}
-        echo "list ./extern/googletest"
-        echo "listing what is inside build/googletest"
-        ls build/googletest
         cd build/googletest
-        pwd
-        echo "listing what is in ../../extern/googletest"
-        ls ../../extern/googletest
-        echo "listing what is in ${{ github.workspace }}/extern/googletest"
-        ls ${{ github.workspace }}/extern/googletest
-        echo "Current directory"
-        pwd
         cmake ${{ github.workspace }}/extern/googletest
         cmake --build .
 
     - name: Configure CMake
       run: cmake -S . -B build
-
-    - name: Print working directory after configuring CMake
-      run: pwd
 
     - name: Build
       run: cmake --build build --config Release
@@ -65,5 +44,4 @@ jobs:
     - name: Run tests
       run: |
         cd build
-        pwd
         ctest --output-on-failure

@@ -19,8 +19,11 @@ jobs:
 
     - name: Build Google Test
       run: |
-        cmake -S extern/googletest -B build/googletest
-        cmake --build build/googletest --config Release
+        cd extern/googletest
+        mkdir -p build
+        cd build
+        cmake ..
+        make
 
     - name: Configure CMake
       run: cmake -S . -B build

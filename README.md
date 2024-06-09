@@ -47,18 +47,30 @@ Note that the raytracing libraries in `/src/ynogk.f90` work independently of Ope
 
 ## Build
 
-Clone/Download this repository. CD into the repository location and into the build directory (which should be empty as of the time of the download).
+Clone/Download this repository. CD into the repositorys directory and initialize the submodules (such as googleTest etc.):
+```bash
+$ cd CPP_KERR_TRACING
+$ git submodule update --init --recursive
+```
+
+Create a build directory (if not already existent) and cd into it. Then build the executables:
 Open a shell inside the build directory and execute
 ```bash
 $ mkdir build && cd build
 $ cmake ..
 $ cmake --build .
 ```
+
 This should build the repository. Once completed, you can execute the program from within the build directory via
 ```bash
 $ ./KERR_SIM
 ```
 Which should yield something like this :<img src="./Screenshots/Simulation.png">
+or execute
+```bash
+$ ctest
+```
+to execute all implemented tests.
 
 ## Remarks
 The main executable as a controllable camera using _WASD_-Controls and the mouse/touchpad. Qt/QML support will be added in the future as well as more examples/executables.

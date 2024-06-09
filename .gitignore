@@ -1,0 +1,25 @@
+# Ignore build directory
+/build/
+
+# Ignore Visual Studio Code settings
+.vscode/
+
+# Ignore MacOS specific files
+.DS_Store
+
+# Ignore CMake build files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+
+# Ignore compiled binaries
+*.exe
+*.out
+*.o
+*.obj
+*.dll
+*.so
+*.dylib
+
+# Ignore logs
+*.log

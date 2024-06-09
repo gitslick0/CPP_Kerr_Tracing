@@ -25,16 +25,13 @@ find_package(GLUT REQUIRED)
 
 #Add include directories
 target_include_directories(KERR_SIM PUBLIC include)
-
 #Include GLFW and GLEW Headers
 target_include_directories(KERR_SIM PRIVATE ${GLFW_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${OPENGL__INCLUDE_DIRS} ${GLUT_INCLUDE_DIRS} ${GLU_INCLUDE_DIRS})
-
 #Define the paths to the shader files
 target_compile_definitions(KERR_SIM PRIVATE
     VERTEX_SHADER_PATH="${CMAKE_SOURCE_DIR}/include/Kerr_Sim/Shaders/vShader.vs"
     FRAGMENT_SHADER_PATH="${CMAKE_SOURCE_DIR}/include/Kerr_Sim/Shaders/fShader.fs"
 )
-
 #Link GLFW and GLEW libraries
 target_link_libraries(KERR_SIM PRIVATE glfw ${GLEW_LIBRARIES} ${OPENGL_LIBRARIES} ${GLU_LIBRARIES} ${GLUT_LIBRARIES} m)
 
@@ -44,3 +41,20 @@ message(STATUS "GLFW3_libraries: ${GLFW3_LIBRARIES}")
 message(STATUS "GLEW libraries : ${GLEW_LIBRARIES}")
 message(STATUS "GLUT libraries: ${freeglut3_libraries}")
 message(STATUS "library directory: ${CMAKE_CURRENT_SOURCE_DIR}/libs")
+
+
+# add Testing framework
+add_subdirectory(extern/googletest)
+enable_testing()
+
+# add testing executable
+add_executable(runTests test/main.cpp test/test_fortran_functions.cpp src/ynogk.f90)
+target_include_directories(runTests PUBLIC include PRIVATE ${GLFW_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${OPENGL__INCLUDE_DIRS} ${GLUT_INCLUDE_DIRS} ${GLU_INCLUDE_DIRS})
+target_link_libraries(runTests gtest gtest_main glfw ${GLEW_LIBRARIES} ${OPENGL_LIBRARIES} ${GLU_LIBRARIES} ${GLUT_LIBRARIES} m)
+target_compile_definitions(KERR_SIM PRIVATE
+    VERTEX_SHADER_PATH="${CMAKE_SOURCE_DIR}/include/Kerr_Sim/Shaders/vShader.vs"
+    FRAGMENT_SHADER_PATH="${CMAKE_SOURCE_DIR}/include/Kerr_Sim/Shaders/fShader.fs"
+)
+
+
+add_test(NAME MyTests COMMAND runTests)

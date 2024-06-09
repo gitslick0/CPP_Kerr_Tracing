@@ -11,16 +11,29 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    - name: Checkout submodules
+      run: git submodule update --init --recursive
+
+    - name: Print working directory after checkout
+      run: |
+        echo "Printing what is inside the extern/googletest repo"
+        ls ${{ github.workspace }}/extern/googletest
+        ls ./extern/googletest
+
     - name: Set up CMake
       uses: jwlawson/actions-setup-cmake@v1
 
     - name: Install dependencies
-      run: sudo apt-get update && sudo apt-get install -y libglew-dev libglfw3-dev libglm-dev
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libglew-dev libglfw3-dev libglm-dev gfortran freeglut3-dev
 
     - name: Build Google Test
       run: |
-        cmake -S extern/googletest -B build/googletest
-        cmake --build build/googletest --config Release
+        mkdir -p build/googletest
+        cd build/googletest
+        cmake ${{ github.workspace }}/extern/googletest
+        cmake --build .
 
     - name: Configure CMake
       run: cmake -S . -B build
@@ -29,4 +42,6 @@ jobs:
       run: cmake --build build --config Release
 
     - name: Run tests
-      run: cd build && ctest --output-on-failure
+      run: |
+        cd build
+        ctest --output-on-failure

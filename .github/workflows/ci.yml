@@ -15,15 +15,14 @@ jobs:
       uses: jwlawson/actions-setup-cmake@v1
 
     - name: Install dependencies
-      run: sudo apt-get update && sudo apt-get install -y libglew-dev libglfw3-dev libglm-dev
+      run: sudo apt-get update && sudo apt-get install -y libglew-dev libglfw3-dev libglm-dev gfortran freeglut3-dev
 
     - name: Build Google Test
       run: |
-        cd extern/googletest
-        mkdir -p build
-        cd build
-        cmake ..
-        make
+        mkdir -p build/googletest
+        cd build/googletest
+        cmake ../../extern/googletest
+        cmake --build .
 
     - name: Configure CMake
       run: cmake -S . -B build

@@ -10,19 +10,23 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
+      with:
+        path: .
+
+    - name: Print working directory after checkout
       run: pwd
 
     - name: Set up CMake
       uses: jwlawson/actions-setup-cmake@v1
+
+    - name: Print working directory after CMake setup
       run: pwd
 
     - name: Install dependencies
       run: |
-        sudo apt-get update && sudo apt-get install -y libglew-dev libglfw3-dev libglm-dev gfortran freeglut3-dev
+        sudo apt-get update
+        sudo apt-get install -y libglew-dev libglfw3-dev libglm-dev gfortran freeglut3-dev
         pwd
-
-    - name: Print working directory  before Google Build
-      run: pwd
 
     - name: Build Google Test
       run: |
@@ -33,12 +37,20 @@ jobs:
         cmake --build .
 
     - name: Configure CMake
-      run: |
-        cmake -S . -B build
-        pwd
+      run: cmake -S . -B build
+      working-directory: .
+
+    - name: Print working directory after configuring CMake
+      run: pwd
+      working-directory: .
 
     - name: Build
       run: cmake --build build --config Release
+      working-directory: .
 
     - name: Run tests
-      run: cd build && ctest --output-on-failure
+      run: |
+        cd build
+        pwd
+        ctest --output-on-failure
+      working-directory: .

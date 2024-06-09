@@ -10,8 +10,6 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-      with:
-        path: .
 
     - name: Print working directory after checkout
       run: pwd
@@ -25,7 +23,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y libglew-dev libglfw3-dev libglm-dev gfortran freeglut3-dev
+        sudo apt-get install -y libglew-dev libglfw3-dev libglm-dev gfortran
         pwd
 
     - name: Build Google Test
@@ -35,22 +33,23 @@ jobs:
         pwd
         cmake ../../extern/googletest
         cmake --build .
+      working-directory: ${{ github.workspace }}
 
     - name: Configure CMake
       run: cmake -S . -B build
-      working-directory: .
+      working-directory: ${{ github.workspace }}
 
     - name: Print working directory after configuring CMake
       run: pwd
-      working-directory: .
+      working-directory: ${{ github.workspace }}
 
     - name: Build
       run: cmake --build build --config Release
-      working-directory: .
+      working-directory: ${{ github.workspace }}
 
     - name: Run tests
       run: |
         cd build
         pwd
         ctest --output-on-failure
-      working-directory: .
+      working-directory: ${{ github.workspace }}

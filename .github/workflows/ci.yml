@@ -12,7 +12,10 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Print working directory after checkout
-      run: pwd
+      run: | 
+        pwd
+        echo ${{ github.workspace }}
+        echo $GITHUB_WORKSPACE
 
     - name: Set up CMake
       uses: jwlawson/actions-setup-cmake@v1
@@ -33,23 +36,23 @@ jobs:
         pwd
         cmake ../../extern/googletest
         cmake --build .
-      working-directory: ${{ github.workspace }}
+      working-directory: $GITHUB_WORKSPACE
 
     - name: Configure CMake
       run: cmake -S . -B build
-      working-directory: ${{ github.workspace }}
+      working-directory: $GITHUB_WORKSPACE
 
     - name: Print working directory after configuring CMake
       run: pwd
-      working-directory: ${{ github.workspace }}
+      working-directory: $GITHUB_WORKSPACE
 
     - name: Build
       run: cmake --build build --config Release
-      working-directory: ${{ github.workspace }}
+      working-directory: $GITHUB_WORKSPACE
 
     - name: Run tests
       run: |
         cd build
         pwd
         ctest --output-on-failure
-      working-directory: ${{ github.workspace }}
+      working-directory: $GITHUB_WORKSPACE

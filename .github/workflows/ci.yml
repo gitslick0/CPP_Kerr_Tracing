@@ -10,51 +10,56 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-      with:
-        path: .
 
     - name: Print working directory after checkout
       run: | 
         pwd
         echo ${{ github.workspace }}
         echo $GITHUB_WORKSPACE
+        ls ${{ github.workspace }}
 
     - name: Set up CMake
       uses: jwlawson/actions-setup-cmake@v1
 
     - name: Print working directory after CMake setup
-      run: pwd
+      run: |
+        pwd
+        ls ${{ github.workspace }}
 
     - name: Install dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y libglew-dev libglfw3-dev libglm-dev gfortran
         pwd
+        ls ${{ github.workspace }}
 
     - name: Build Google Test
       run: |
         mkdir -p build/googletest
+        echo "Listing github workspace"
+        ls ${{ github.workspace }}
+        echo "listing what is inside build/googletest"
+        ls build/googletest
         cd build/googletest
+        pwd
+        echo "listing what is in ../../extern/googletest"
+        ls ../../extern/googletest
+        echo "Current directory"
         pwd
         cmake ../../extern/googletest
         cmake --build .
-      working-directory: $GITHUB_WORKSPACE
 
     - name: Configure CMake
       run: cmake -S . -B build
-      working-directory: $GITHUB_WORKSPACE
 
     - name: Print working directory after configuring CMake
       run: pwd
-      working-directory: $GITHUB_WORKSPACE
 
     - name: Build
       run: cmake --build build --config Release
-      working-directory: $GITHUB_WORKSPACE
 
     - name: Run tests
       run: |
         cd build
         pwd
         ctest --output-on-failure
-      working-directory: $GITHUB_WORKSPACE

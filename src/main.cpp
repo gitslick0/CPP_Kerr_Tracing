@@ -1,6 +1,11 @@
 #include"./Kerr_Sim/helpers/Renderer2.h"
 #include"./Kerr_Sim/helpers/Classes_lib.h"
 
+void Ask_for_UI(std::string Text){
+  std::cout << "\033[1;31m";
+  std::cout << Text << std::endl;
+  std::cout << "\033[0m";
+}
 
 
 int main() {
@@ -14,13 +19,13 @@ int main() {
     
     // Initialize Emission Setup
       // Initiate BlackHole
-    std::cout << "Set the Spin of the Black Hole between (-0.998, 0.998)" << std::endl;
+    Ask_for_UI("Set the Spin of the Black Hole between (-0.998, 0.998)");
     float input_a_spin;
     std::cin >> input_a_spin; 
     BlackHole BH = BlackHole(input_a_spin);
 
       // Set up position and Velocity of source
-    std::cout << "Set the (cartesian) position of the source (float x,y,z)\n note that the point must lie outside the event horizon for the visualization to work properly" << std::endl;
+    Ask_for_UI("Set the (cartesian) position of the source (float x,y,z)\n note that the point must lie outside the event horizon for the visualization to work properly");
     float input_x, input_y, input_z;
     std::cin >> input_x >> input_y >> input_z;
     
@@ -33,7 +38,7 @@ int main() {
     Emission_Setup ESt = Emission_Setup(source_position, source_velocity, 200, BH.get_a_spin());
 
 
-    std::cout << "int: How many Photons would you like to simulate? (Note: Visualization can only handle ~ 1000 Photons (depending on your specs))" << std::endl;
+    Ask_for_UI("int: How many Photons would you like to simulate? (Note: Visualization can only handle ~ 1000 Photons (depending on your specs))");
     int num_Photons;
     std::cin >> num_Photons;
 
@@ -69,7 +74,7 @@ int main() {
     renderer.addDrawable(&Disk);
 #endif
 
-    std::cout << "Starting to render" << std::endl;
+    Ask_for_UI("Starting to render ...");
 
     renderer.render();
 

@@ -42,10 +42,11 @@ message(STATUS "GLEW libraries : ${GLEW_LIBRARIES}")
 message(STATUS "GLUT libraries: ${freeglut3_libraries}")
 message(STATUS "library directory: ${CMAKE_CURRENT_SOURCE_DIR}/libs")
 
-#set_target_properties(KERR_SIM PROPERTIES 
-#    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build/OpenGL"
+set_target_properties(KERR_SIM PROPERTIES 
+     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/OpenGL"
 #    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build/OpenGL"
-#    ARCHIVE_OUTPUT_DIRECTORY "{CMAKE_SOURCE_DIR}/build/OpenGL")
+#    ARCHIVE_OUTPUT_DIRECTORY "{CMAKE_SOURCE_DIR}/build/OpenGL"
+)
 
 #-------------------------------Write Tests ------------------------------------------
 
@@ -54,14 +55,21 @@ message(STATUS "library directory: ${CMAKE_CURRENT_SOURCE_DIR}/libs")
 #add_subdirectory(./test)
 
 # add testing executable
-add_executable(runTests test/main.cpp test/test_fortran_functions.cpp ${CMAKE_SOURCE_DIR}/src/ynogk.f90)
-target_include_directories(runTests PUBLIC ${CMAKE_SOURCE_DIR}/include PRIVATE ${GLFW_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${OPENGL__INCLUDE_DIRS} ${GLUT_INCLUDE_DIRS} ${GLU_INCLUDE_DIRS})
-target_link_libraries(runTests gtest gtest_main glfw ${GLEW_LIBRARIES} ${OPENGL_LIBRARIES} ${GLU_LIBRARIES} ${GLUT_LIBRARIES} m)
+add_executable(runOpenGLTests test/main.cpp test/test_fortran_functions.cpp ${CMAKE_SOURCE_DIR}/src/ynogk.f90)
+target_include_directories(runOpenGLTests PUBLIC ${CMAKE_SOURCE_DIR}/include PRIVATE ${GLFW_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${OPENGL__INCLUDE_DIRS} ${GLUT_INCLUDE_DIRS} ${GLU_INCLUDE_DIRS})
+target_link_libraries(runOpenGLTests gtest gtest_main glfw ${GLEW_LIBRARIES} ${OPENGL_LIBRARIES} ${GLU_LIBRARIES} ${GLUT_LIBRARIES} m)
 target_compile_definitions(KERR_SIM PRIVATE
     VERTEX_SHADER_PATH="${CMAKE_SOURCE_DIR}/include/Kerr_Sim/Shaders/vShader.vs"
     FRAGMENT_SHADER_PATH="${CMAKE_SOURCE_DIR}/include/Kerr_Sim/Shaders/fShader.fs"
 )
 
-add_test(NAME OpenGLTests COMMAND runTests)
+add_test(NAME OpenGLTests COMMAND runOpenGLTests)
+
+set_target_properties(runOpenGLTests PROPERTIES 
+     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/OpenGL"
+#    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build/OpenGL"
+#    ARCHIVE_OUTPUT_DIRECTORY "{CMAKE_SOURCE_DIR}/build/OpenGL"
+)
+
 
 enable_testing()

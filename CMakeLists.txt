@@ -7,6 +7,15 @@ project(YourProject VERSION 1.0 LANGUAGES CXX Fortran)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+# CMake Module Directory
+# Add the FindCfitsio
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules")
+if(NOT EXISTS "${CMAKE_SOURCE_DIR}/cmake/Modules/FindCFITSIO.cmake")
+    message(WARNING "Didn't find CFITSIO.cmake file in Modules path")
+endif()
+
+
+
 # Add src directory
 # Optionally, create a build directory for Project1
 execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_SOURCE_DIR}/build/OpenGL")
@@ -16,6 +25,10 @@ add_subdirectory(src/OpenGL ${CMAKE_SOURCE_DIR}/build/OpenGL)
 # add Testing framework
 execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_SOURCE_DIR}/build/extern/googletest")
 add_subdirectory(extern/googletest ${CMAKE_SOURCE_DIR}/build/extern/googletest)
+
+# add Fitswrite chapter
+execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_SOURCE_DIR}/build/FITS_Write")
+add_subdirectory(src/FITS_WRITE ${CMAKE_SOURCE_DIR}/build/FITS_Write)
 
 #add_test(NAME OpenGL_TEST COMMAND ${CMAKE_SOURCE_DIR}/build/OpenGL/runTests)
 enable_testing()

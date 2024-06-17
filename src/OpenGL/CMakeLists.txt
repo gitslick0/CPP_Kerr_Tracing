@@ -37,10 +37,8 @@ target_link_libraries(KERR_SIM PRIVATE glfw ${GLEW_LIBRARIES} ${OPENGL_LIBRARIES
 
 #Debugging Information
 message(STATUS "OpenGL libraries: ${OPENGL_LIBRARIES}")
-message(STATUS "GLFW3_libraries: ${GLFW3_LIBRARIES}")
 message(STATUS "GLEW libraries : ${GLEW_LIBRARIES}")
-message(STATUS "GLUT libraries: ${freeglut3_libraries}")
-message(STATUS "library directory: ${CMAKE_CURRENT_SOURCE_DIR}/libs")
+message(STATUS "GLUT libraries: ${GLUT_LIBRARIES}")
 
 set_target_properties(KERR_SIM PROPERTIES 
      RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/OpenGL"

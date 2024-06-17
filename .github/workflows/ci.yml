@@ -26,7 +26,8 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y libglew-dev libglfw3-dev libglm-dev gfortran freeglut3-dev
+        sudo apt-get install -y libglew-dev libglfw3-dev libglm-dev gfortran freeglut3-dev libcfitsio-dev
+        export LD_LIBRARY_PATH=/usr/lib:$LD_LIBRARY_PATH
 
     - name: Build Google Test
       run: |

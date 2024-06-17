@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 # Set the project name and version
-project(YourProject VERSION 1.0 LANGUAGES CXX Fortran)
+project(KerrTracing VERSION 1.0 LANGUAGES CXX Fortran)
 
 # Specify the C++ standard
 set(CMAKE_CXX_STANDARD 11)
@@ -14,9 +14,16 @@ if(NOT EXISTS "${CMAKE_SOURCE_DIR}/cmake/Modules/FindCFITSIO.cmake")
     message(WARNING "Didn't find CFITSIO.cmake file in Modules path")
 endif()
 
+# Set configuration
+configure_file(configuration/root_directory.h.in configuration/root_directory.h)
+include_directories(${CMAKE_BINARY_DIR}/configuration)
+
+# Create relevant static libraries required for other projects
+add_library(STB_IMAGE "src/stb_image.cpp")
+target_include_directories(STB_IMAGE PUBLIC ${CMAKE_SOURCE_DIR}/include)
+set(LIBS ${LIBS} STB_IMAGE)
 
 
-# Add src directory
 # Optionally, create a build directory for Project1
 execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_SOURCE_DIR}/build/OpenGL")
 # Invoke CMake for OpenGL Project

@@ -7,11 +7,8 @@
 #include "ShaderClass.h"
 #include "CameraClass.h"
 #include "Drawables.h"
-
-
-
-
-
+#include "./filesystem.h"
+#include "Cubemap.h"
 
 class Renderer {
 public:
@@ -35,6 +32,11 @@ public:
             exit(1);
         }
 
+        // Set window Hints
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
         // Initialize window to draw in
         window = glfwCreateWindow(width, height, this->title, nullptr, nullptr);
         if (!window) {
@@ -54,6 +56,7 @@ public:
         // Set shader paths as defined in the compile configurations
         const char* vertexShaderPath = VERTEX_SHADER_PATH;
         const char* fragmentShaderPath = FRAGMENT_SHADER_PATH;
+        std::cout << "Fragment Shader Path is " << FRAGMENT_SHADER_PATH << std::endl;
 
         // configure global opengl state
         // -----------------------------
@@ -73,6 +76,77 @@ public:
 
     void render() {
 
+        Shader skyboxShader = Shader(SKYBOX_VERTEX_SHADER_PATH, SKYBOX_FRAGMENT_SHADER_PATH);
+        
+        float skyboxVertices[] = {
+        // positions          
+        -1.0f,  1.0f, -1.0f,
+        -1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+
+        -1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+
+        -1.0f, -1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+
+        -1.0f,  1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f, -1.0f,
+
+        -1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+         1.0f, -1.0f,  1.0f
+    };
+        // skybox VAO
+        unsigned int skyboxVAO, skyboxVBO;
+        glGenVertexArrays(1, &skyboxVAO);
+        glGenBuffers(1, &skyboxVBO);
+        glBindVertexArray(skyboxVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+        std::vector<std::string> faces
+        {
+            FileSystem::getPath("resources/textures/spacebox/right.jpg"),
+            FileSystem::getPath("resources/textures/spacebox/left.jpg"),
+            FileSystem::getPath("resources/textures/spacebox/top.jpg"),
+            FileSystem::getPath("resources/textures/spacebox/bottom.jpg"),
+            FileSystem::getPath("resources/textures/spacebox/front.jpg"),
+            FileSystem::getPath("resources/textures/spacebox/back.jpg")
+        };
+
+        unsigned int cubemapTexture = loadCubemap(faces);
+
+        skyboxShader.use();
+        skyboxShader.setInt("skybox", 0);
+
         while (!glfwWindowShouldClose(window)) {
             // per-frame time logic
             // --------------------
@@ -81,10 +155,18 @@ public:
             deltaTime = currentFrame - lastFrame;
             lastFrame = currentFrame;
 
-
             glClearColor(0.0f, 0.5f, 0.9f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             processInput(window);
+
+            shader.use();
+            // pass projection matrix to shader (note that in this case it could change every frame 
+            glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f);
+            shader.setMat4("projection", projection);
+
+            // camera/view transformation
+            glm::mat4 view = camera.GetViewMatrix();
+            shader.setMat4("view", view);
 
             for (const auto &element : this->Drawables){
             element->update(time);
@@ -94,21 +176,34 @@ public:
             element->draw();
             }
 
+
+            // draw skybox as last
+            glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
+            skyboxShader.use();
+            view = glm::mat4(glm::mat3(view)); // remove translation from the view matrix
+            skyboxShader.setMat4("view", view);
+            skyboxShader.setMat4("projection", projection);
+            // skybox cube
+            glBindVertexArray(skyboxVAO);
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+            glBindVertexArray(0);
+            glDepthFunc(GL_LESS); // set depth function back to default
+            
             // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
             // -------------------------------------------------------------------------------
-            shader.use();
-            
-            // pass projection matrix to shader (note that in this case it could change every frame)
-            glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f);
-            shader.setMat4("projection", projection);
-
-            // camera/view transformation
-            glm::mat4 view = camera.GetViewMatrix();
-            shader.setMat4("view", view);
 
             glfwSwapBuffers(window);
             glfwPollEvents();
         }
+
+        // optional: de-allocate all resources once they've outlived their purpose:
+        // ------------------------------------------------------------------------
+        glDeleteVertexArrays(1, &skyboxVAO);
+        glDeleteBuffers(1, &skyboxVBO);
+
+        glfwTerminate();
     }
 
     static void cursor_position_callback(GLFWwindow* window, double xposIn, double yposIn) {

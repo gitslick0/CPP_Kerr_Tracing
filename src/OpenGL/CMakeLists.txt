@@ -31,9 +31,11 @@ target_include_directories(KERR_SIM PRIVATE ${GLFW_INCLUDE_DIRS} ${GLEW_INCLUDE_
 target_compile_definitions(KERR_SIM PRIVATE
     VERTEX_SHADER_PATH="${CMAKE_SOURCE_DIR}/include/Kerr_Sim/Shaders/vShader.vs"
     FRAGMENT_SHADER_PATH="${CMAKE_SOURCE_DIR}/include/Kerr_Sim/Shaders/fShader.fs"
+    SKYBOX_VERTEX_SHADER_PATH="${CMAKE_SOURCE_DIR}/include/Kerr_Sim/Shaders/skyboxShader.vs"
+    SKYBOX_FRAGMENT_SHADER_PATH="${CMAKE_SOURCE_DIR}/include/Kerr_Sim/Shaders/skyboxShader.fs"
 )
 #Link GLFW and GLEW libraries
-target_link_libraries(KERR_SIM PRIVATE glfw ${GLEW_LIBRARIES} ${OPENGL_LIBRARIES} ${GLU_LIBRARIES} ${GLUT_LIBRARIES} m)
+target_link_libraries(KERR_SIM PRIVATE glfw ${GLEW_LIBRARIES} ${OPENGL_LIBRARIES} ${GLU_LIBRARIES} ${GLUT_LIBRARIES} m ${LIBS})
 
 #Debugging Information
 message(STATUS "OpenGL libraries: ${OPENGL_LIBRARIES}")

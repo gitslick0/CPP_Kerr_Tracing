@@ -39,6 +39,8 @@ $ sudo apt-get install mesa-utils libglu1-mesa-dev freeglut3-dev mesa-common-dev
 $ sudo apt-get install libglew-dev libglfw3-dev libglm-dev
 $ sudo apt-get install freeglut3-dev
 $ sudo apt-get install libao-dev libmpg123-dev
+$ sudo apt-get install libcfitsio-dev
+$ export LD_LIBRARY_PATH=/usr/lib:$LD_LIBRARY_PATH
 ```
 
 If you are unsure whether OpenGL was installed correctly, please follow [this](https://medium.com/geekculture/a-beginners-guide-to-setup-opengl-in-linux-debian-2bfe02ccd1e) page to compile a simple example program.

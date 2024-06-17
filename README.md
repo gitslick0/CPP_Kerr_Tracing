@@ -39,13 +39,20 @@ $ sudo apt-get install mesa-utils libglu1-mesa-dev freeglut3-dev mesa-common-dev
 $ sudo apt-get install libglew-dev libglfw3-dev libglm-dev
 $ sudo apt-get install freeglut3-dev
 $ sudo apt-get install libao-dev libmpg123-dev
-$ sudo apt-get install libcfitsio-dev
-$ export LD_LIBRARY_PATH=/usr/lib:$LD_LIBRARY_PATH
 ```
 
 If you are unsure whether OpenGL was installed correctly, please follow [this](https://medium.com/geekculture/a-beginners-guide-to-setup-opengl-in-linux-debian-2bfe02ccd1e) page to compile a simple example program.
 
 Note that the raytracing libraries in `/src/ynogk.f90` work independently of OpenGL. If you only wish to use these libraries and build your own executables, you can skip this installation step.
+
+### 4. CFitsio
+
+For the FITS_WRITE Project, the HEASOFT CFitsio Library is necessary. To install it, use
+
+```bash
+$ sudo apt-get install libcfitsio-dev
+$ export LD_LIBRARY_PATH=/usr/lib:$LD_LIBRARY_PATH
+```
 
 ## Build
 
@@ -58,21 +65,21 @@ $ git submodule update --init --recursive
 Create a build directory (if not already existent) and cd into it. Then build the executables:
 Open a shell inside the build directory and execute
 ```bash
-$ mkdir build && cd build
-$ cmake ..
-$ cmake --build .
+$ cmake -S . -B build
+$ cmake --build build
 ```
 
-This should build the repository. Once completed, you can execute the program from within the build directory via
+This should build the repository. Once completed, you can execute any of the compiled programs from within the ```./bin``` directory. Currently the main executable is ```./bin/OpenGL/KERR_SIM```
 ```bash
 $ ./KERR_SIM
 ```
-Which should yield something like this :<img src="./Screenshots/Simulation.png">
+Which should yield something like this: 
+(input parameters: _a=0.98, x = 2.0, y = 2.0, z = 2.0, N_Ph = 400_)<img src="./Screenshots/Simulation.png">
 or execute
 ```bash
-$ ctest
+$ ctest --test-dir build
 ```
 to execute all implemented tests.
 
 ## Remarks
-The main executable as a controllable camera using _WASD_-Controls and the mouse/touchpad. Qt/QML support will be added in the future as well as more examples/executables.
+The main executable (```KERR_SIM```) has a controllable camera using _WASD_-Controls and the mouse/touchpad. Qt/QML support will be added in the future as well as more examples/executables.

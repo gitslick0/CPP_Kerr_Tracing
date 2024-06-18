@@ -272,6 +272,7 @@ private:
     const int slices = 120;
     double height = 0.0;
 public:
+    bool is_disk = true;
     DrawableDisk(){};
     DrawableDisk(double inp_r_in, double inp_r_out, double inp_height){
         this->r_in = inp_r_in;
@@ -323,6 +324,7 @@ public:
     }
 
     void draw() override {
+    std::cout << "trying to draw the disk" << std::endl;
     std::vector<GLfloat> vertices = this->createVertices();
     std::vector<GLuint> indices = this->createIndices();
 
@@ -358,11 +360,12 @@ public:
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // Set rendering mode to wireframe
     }
 
-        void draw2() override {
+    void draw2() override {
         std::cout << "This is not a drawing method" << std::endl;
     }
 
     void update(float time) override {
+        std::cout << "trying to update disk " << std::endl;
         glm::mat4 updated_model_matrix = glm::mat4(1.0f);
         updated_model_matrix = glm::rotate(updated_model_matrix, 3.0f*time, glm::vec3(0.0, 1.0, 0.0));
         updated_model_matrix = glm::translate(updated_model_matrix, this->getGlobalPosition());

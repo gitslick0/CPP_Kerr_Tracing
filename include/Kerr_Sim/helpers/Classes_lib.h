@@ -597,7 +597,7 @@ public:
     }
     std::cout << "}" << std::endl;
   }
-  void calculate_rays(int n_steps, double a_spin){
+  void calculate_rays(int n_steps, double a_spin, bool USE_DISK = false){
     std::vector<Photon> new_Photons = {};
     for (int jj = 0; jj < int(Photons.size()); ++jj){
       Photon curr_Photon = Photons[jj];
@@ -606,12 +606,12 @@ public:
       std::vector<float> curr_Photon_time = {};
       std::vector<glm::vec3> curr_Photon_colors = {};
       double p_final = curr_Photon.get_p_total();
-      #ifdef USE_DISK
-      if(curr_Photon.get_p_emdisk() != -1 && curr_Photon.get_p_emdisk() != -2){
-        // If we only want the part until it hits the disk
-        p_final = curr_Photon.get_p_emdisk();
+      if(USE_DISK){
+        if(curr_Photon.get_p_emdisk() != -1 && curr_Photon.get_p_emdisk() != -2){
+          // If we only want the part until it hits the disk
+          p_final = curr_Photon.get_p_emdisk();
+        }
       }
-      #endif
       for(int kk = 0; kk < n_steps; ++kk){
         double p_curr = p_final/static_cast<double>(n_steps) * kk;
         std::array<double, 5> curr_photon_pos = YNOGK(p_curr, curr_Photon.get_initial_direction(), curr_Photon.get_motion_constants(), position, a_spin);
@@ -681,8 +681,8 @@ public:
   void set_AccretionDisk(const AccretionDisk &new_AD){
     AD = new_AD;
   }
-  void calculate_Photon_rays(int n_steps){
-    ES.calculate_rays(n_steps, BH.get_a_spin());
+  void calculate_Photon_rays(int n_steps, bool USE_DISK = false){
+    ES.calculate_rays(n_steps, BH.get_a_spin(), USE_DISK);
   }
 
 };

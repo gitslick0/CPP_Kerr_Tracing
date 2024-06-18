@@ -24,6 +24,10 @@ int main() {
     std::cin >> input_a_spin; 
     BlackHole BH = BlackHole(input_a_spin);
 
+    Ask_for_UI("Do you want to simulate the accretion Disk? (y=1/n=0)");
+    bool USE_DISK;
+    std::cin >> USE_DISK;
+
       // Set up position and Velocity of source
     Ask_for_UI("Set the (cartesian) position of the source (float x,y,z)\n note that the point must lie outside the event horizon for the visualization to work properly");
     float input_x, input_y, input_z;
@@ -43,7 +47,7 @@ int main() {
     std::cin >> num_Photons;
 
     // Calculate Photon Rays
-    ESt.calculate_Photon_rays(num_Photons);
+    ESt.calculate_Photon_rays(num_Photons, USE_DISK);
     //ESt2.calculate_Photon_rays(500);
 
     glLineWidth(3.0f);
@@ -69,12 +73,24 @@ int main() {
 
     renderer.addDrawable(&Draw_BH);
 
-#ifdef USE_DISK
-    DrawableDisk Disk = DrawableDisk(BH.get_rms(), 100.0, 0.0);
-    renderer.addDrawable(&Disk);
-#endif
+      DrawableDisk Disk = DrawableDisk(BH.get_rms(), 100.0, 0.0);
+
+    if(USE_DISK){
+      //DrawableDisk Disk = DrawableDisk(BH.get_rms(), 100.0, 0.0);
+      renderer.addDrawable(&Disk);
+      std::cout << "Disk added " << std::endl;
+    }
+
+    std::cout << "length of photon vector " << int(ESt.get_EmittedPhotons().size());
+    std::cout << "length of the Photon Draw vector " << int(PhotonDraws.size());
+    std::cout << "length of the Drawables vector " << int(renderer.getDrawables().size());
+
+
 
     Ask_for_UI("Starting to render ...");
+    Ask_for_UI("Go?");
+    int Go = 0;
+    std::cin >> Go;
 
     renderer.render();
 

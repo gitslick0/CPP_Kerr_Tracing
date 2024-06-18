@@ -73,6 +73,9 @@ public:
     void addDrawable(Drawable* ToDraw){
         this->Drawables.push_back(ToDraw);
     }
+    std::vector<Drawable*> getDrawables(){
+        return this->Drawables;
+    }
 
     void render() {
 
@@ -134,12 +137,12 @@ public:
 
         std::vector<std::string> faces
         {
-            FileSystem::getPath("resources/textures/spacebox/right.jpg"),
-            FileSystem::getPath("resources/textures/spacebox/left.jpg"),
-            FileSystem::getPath("resources/textures/spacebox/top.jpg"),
-            FileSystem::getPath("resources/textures/spacebox/bottom.jpg"),
-            FileSystem::getPath("resources/textures/spacebox/front.jpg"),
-            FileSystem::getPath("resources/textures/spacebox/back.jpg")
+            FileSystem::getPath("resources/textures/spacebox2/right.jpg"),
+            FileSystem::getPath("resources/textures/spacebox2/left.jpg"),
+            FileSystem::getPath("resources/textures/spacebox2/top.jpg"),
+            FileSystem::getPath("resources/textures/spacebox2/bottom.jpg"),
+            FileSystem::getPath("resources/textures/spacebox2/front.jpg"),
+            FileSystem::getPath("resources/textures/spacebox2/back.jpg")
         };
 
         unsigned int cubemapTexture = loadCubemap(faces);
@@ -168,12 +171,30 @@ public:
             glm::mat4 view = camera.GetViewMatrix();
             shader.setMat4("view", view);
 
+            int jj = 0;
+            std::cout << "length of drawable list (within shader) " << this->Drawables.size() << std::endl;
+
             for (const auto &element : this->Drawables){
+            std::cout << "currently at element " << jj+1 << std::endl;
+            if( auto p = dynamic_cast<DrawableDisk*>( element ) ){
+                std::cout << "about to draw the disk";
+            }
+            if( auto p = dynamic_cast<DrawableLine*>( element ) ){
+                std::cout << "about to draw the line";
+            }
+            std::cout << element << std::endl;
             element->update(time);
+            std::cout << "update function called " << std::endl;
             shader.setMat4("model", element->getModelMatrix());
+
+            if( auto p = dynamic_cast<DrawableBLSphere*>( element )){
+                std::cout << "about to draw BH ";
+            }
 
             //auto element2 = element;
             element->draw();
+            jj++;
+            std::cout << "drew element " << jj << std::endl;
             }
 
 

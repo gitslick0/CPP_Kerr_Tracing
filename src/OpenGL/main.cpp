@@ -77,20 +77,12 @@ int main() {
 
     if(USE_DISK){
       //DrawableDisk Disk = DrawableDisk(BH.get_rms(), 100.0, 0.0);
+
       renderer.addDrawable(&Disk);
       std::cout << "Disk added " << std::endl;
     }
 
-    std::cout << "length of photon vector " << int(ESt.get_EmittedPhotons().size());
-    std::cout << "length of the Photon Draw vector " << int(PhotonDraws.size());
-    std::cout << "length of the Drawables vector " << int(renderer.getDrawables().size());
-
-
-
     Ask_for_UI("Starting to render ...");
-    Ask_for_UI("Go?");
-    int Go = 0;
-    std::cin >> Go;
 
     renderer.render();
 

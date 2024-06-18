@@ -171,30 +171,12 @@ public:
             glm::mat4 view = camera.GetViewMatrix();
             shader.setMat4("view", view);
 
-            int jj = 0;
-            std::cout << "length of drawable list (within shader) " << this->Drawables.size() << std::endl;
-
             for (const auto &element : this->Drawables){
-            std::cout << "currently at element " << jj+1 << std::endl;
-            if( auto p = dynamic_cast<DrawableDisk*>( element ) ){
-                std::cout << "about to draw the disk";
-            }
-            if( auto p = dynamic_cast<DrawableLine*>( element ) ){
-                std::cout << "about to draw the line";
-            }
-            std::cout << element << std::endl;
             element->update(time);
-            std::cout << "update function called " << std::endl;
             shader.setMat4("model", element->getModelMatrix());
-
-            if( auto p = dynamic_cast<DrawableBLSphere*>( element )){
-                std::cout << "about to draw BH ";
-            }
 
             //auto element2 = element;
             element->draw();
-            jj++;
-            std::cout << "drew element " << jj << std::endl;
             }
 
 

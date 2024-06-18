@@ -324,7 +324,7 @@ public:
     }
 
     void draw() override {
-    std::cout << "trying to draw the disk" << std::endl;
+
     std::vector<GLfloat> vertices = this->createVertices();
     std::vector<GLuint> indices = this->createIndices();
 
@@ -365,7 +365,6 @@ public:
     }
 
     void update(float time) override {
-        std::cout << "trying to update disk " << std::endl;
         glm::mat4 updated_model_matrix = glm::mat4(1.0f);
         updated_model_matrix = glm::rotate(updated_model_matrix, 3.0f*time, glm::vec3(0.0, 1.0, 0.0));
         updated_model_matrix = glm::translate(updated_model_matrix, this->getGlobalPosition());

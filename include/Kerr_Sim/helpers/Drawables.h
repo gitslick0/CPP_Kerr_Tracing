@@ -462,10 +462,11 @@ public:
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // Set rendering mode to wireframe
     }
     void update(float time) override {
-
-        //auto lower = std::lower_bound(time_ray.begin(), time_ray.end(), (time-5)*3);
-        //auto index = std::distance(time_ray.begin(), lower);
-        //this->n_draw = index;
+        /* This function would take "Photon Time" for the rendering of the photon lines
+        auto lower = std::lower_bound(time_ray.begin(), time_ray.end(), (time-5)*2);
+        auto index = std::distance(time_ray.begin(), lower);
+        this->n_draw = index;
+        */
         //double size = static_cast<double>(coordinates.size());
         this->n_draw = std::max(static_cast<int>(coordinates.size()/20.0 * fmod((time - 5), 20.0)), 1);
         //std::cout << fmod((time - 5), 20) << std::endl;

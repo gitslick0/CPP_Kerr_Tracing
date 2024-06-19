@@ -52,8 +52,8 @@ int main() {
 
     glLineWidth(3.0f);
 
-    const int WIDTH = 800;
-    const int HEIGHT = 600;
+    const int WIDTH = 1600;
+    const int HEIGHT = 900;
     const char* TITLE = "BlackHole ??";
 
     Renderer renderer(WIDTH, HEIGHT, TITLE);

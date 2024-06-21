@@ -5329,6 +5329,7 @@
         endif
         alphac=alphac*robs*scal
         betac=betac*robs*scal
+        write(*,*) alphac, betac
         return
       End Subroutine center_of_image
 

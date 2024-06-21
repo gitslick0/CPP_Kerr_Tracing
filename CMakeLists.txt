@@ -37,5 +37,13 @@ add_subdirectory(extern/googletest ${CMAKE_SOURCE_DIR}/build/extern/googletest)
 execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_SOURCE_DIR}/build/FITS_Write")
 add_subdirectory(src/FITS_WRITE ${CMAKE_SOURCE_DIR}/build/FITS_Write)
 
+# add Shadows chapter
+execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_SOURCE_DIR}/build/Shadows")
+add_subdirectory(src/Shadows ${CMAKE_SOURCE_DIR}/build/Shadows)
+
+# add Shadows chapter
+execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_SOURCE_DIR}/build/Thin_Disk")
+add_subdirectory(src/Thin_Disk ${CMAKE_SOURCE_DIR}/build/Thin_Disk)
+
 #add_test(NAME OpenGL_TEST COMMAND ${CMAKE_SOURCE_DIR}/build/OpenGL/runTests)
 enable_testing()

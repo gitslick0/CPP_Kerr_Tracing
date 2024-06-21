@@ -29,6 +29,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y libglew-dev libglfw3-dev libglm-dev gfortran freeglut3-dev libcfitsio-dev
+        sudo apt-get install -y libeigen3-dev libopencv-dev
         export LD_LIBRARY_PATH=/usr/lib:$LD_LIBRARY_PATH
 
     - name: Build Google Test

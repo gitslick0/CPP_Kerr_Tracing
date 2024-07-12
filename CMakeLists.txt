@@ -45,5 +45,9 @@ add_subdirectory(src/Shadows ${CMAKE_SOURCE_DIR}/build/Shadows)
 execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_SOURCE_DIR}/build/Thin_Disk")
 add_subdirectory(src/Thin_Disk ${CMAKE_SOURCE_DIR}/build/Thin_Disk)
 
+# add CrossSectional Velocity Profile Calculation Chapter
+execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_SOURCE_DIR}/build/VPCS")
+add_subdirectory(src/VP_CS ${CMAKE_SOURCE_DIR}/build/VPCS)
+
 #add_test(NAME OpenGL_TEST COMMAND ${CMAKE_SOURCE_DIR}/build/OpenGL/runTests)
 enable_testing()
